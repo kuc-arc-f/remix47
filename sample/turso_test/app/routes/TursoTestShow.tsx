@@ -12,6 +12,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useActionData,
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
@@ -21,6 +22,7 @@ import type {
 } from "@remix-run/node";
 import CrudIndex from './TursoTest/CrudIndex';
 import CrudShow from './TursoTest/CrudShow';
+import LibConfig from '../lib/LibConfig';
 //
 export const meta: MetaFunction = () => {
   return [
@@ -53,12 +55,18 @@ export const action = async ({
 //console.log(item);
   const resulte = await CrudShow.delete(Number(item_id));
   //console.log(resulte);
-  return redirect(`/tursotest`);
+  //return redirect(`/tursotest`);
+  return json({ ret: LibConfig.OK_CODE })
 }
 //
 export default function Index() {
   const { data } = useLoaderData<typeof loader>();
-console.log(data);
+//console.log(data);
+  const actionData = useActionData<typeof action>();
+  if(actionData){
+    console.log(actionData.ret);
+    location.href= '/tursotest';
+  }
   //
   return (
     <div className="container mx-auto my-2 px-8 bg-white" >
