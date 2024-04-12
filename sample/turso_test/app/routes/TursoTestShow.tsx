@@ -1,5 +1,7 @@
 import {useState, useEffect}  from 'react';
 import type { MetaFunction } from "@remix-run/node";
+//import { useLocation } from 'remix';
+import { useLocation } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -18,6 +20,7 @@ import type {
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import CrudIndex from './TursoTest/CrudIndex';
+import CrudShow from './TursoTest/CrudShow';
 //
 export const meta: MetaFunction = () => {
   return [
@@ -26,12 +29,16 @@ export const meta: MetaFunction = () => {
   ];
 };
 //
-export const loader = async () => {
-  const resulte = await CrudIndex.getList();
+export const loader = async (
+  { request }: LoaderFunctionArgs
+) => {
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
+  const id = searchParams.get("id");
+console.log(id);
+  const resulte = await CrudShow.get(Number(id));
 //console.log(resulte);
-  return json({
-     contacts: resulte, data: resulte
-  });
+  return json({ data: resulte });
 };
 //
 export const action = async ({
@@ -52,43 +59,23 @@ console.log("title=", title);
 }
 //
 export default function Index() {
-  const { contacts, data } = useLoaderData<typeof loader>();
-//console.log(contacts);
+  const { data } = useLoaderData<typeof loader>();
+console.log(data);
   //
   return (
     <div className="container mx-auto my-2 px-8 bg-white" >
-      <h1 className="text-4xl font-bold">TursoTest.tsx</h1>
+      <a href={`/tursotest`}>
+        <button className="btn-outline-purple">Back</button>
+      </a>
       <hr className="my-2" />
-      <Form method="post" name="form3" id="form3" 
-      className="remix__form">
-        <label className="text-2xl font-bold">
-          <div>title:</div>
-          <input  className="input_text"
-          name="title" id="title" type="text" />
-        </label>
-        <div>
-          <button type="submit" className="btn my-2"
-          >Save</button>
-        </div>
-      </Form>
+      <h1 className="text-4xl font-bold">TursoTestShow</h1>
+      <hr className="my-2" />
+      <h1 className="text-4xl font-bold">{data.title}</h1>
+      <hr className="my-2" />
+      <p>id: {data.id}, {data.createdAt}</p>
       <hr />
-      <ul>
-      {contacts.map(item => (
-        <li key={item.id} className="remix__page__resource">
-          <h3 className="text-3xl font-bold">{item.title}</h3>
-          <p>ID :{item.id}
-            <Link to={`/tursotestshow?id=${item.id}`} 
-            className="ms-2 btn-outline-purple">Show
-            </Link>
-          </p>
-          <hr className="my-2" />
-        </li>
-      ))}
-        </ul>
     </div>
   );
 }
 /*
-<Link to={`./${item.id}`}>[ Show ]</Link>
-<Link to={`edit/${item.id}`}>[ edit ]</Link>
 */

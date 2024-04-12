@@ -19,10 +19,6 @@ const CrudIndex = {
 console.log(postItem); 
       const url = import.meta.env.VITE_EXTERNAL_API_URL + "/test/get_list";
 console.log("url=", url);
-      /*
-      const response = await fetch(url);
-      const json = await response.json();
-      */
       const body: any = JSON.stringify(postItem);
       const response = await axios.post(url, body, 
         {headers: { 'Content-Type': 'application/json'}

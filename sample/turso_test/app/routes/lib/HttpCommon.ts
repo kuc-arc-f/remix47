@@ -1,5 +1,4 @@
 import LibConfig from './LibConfig';
-//require('dotenv').config();
 import axios from 'axios';
 //
 const HttpCommon = {
