@@ -46,16 +46,14 @@ export const action = async ({
   request,
 }: ActionFunctionArgs) => {
   let formData = await request.formData();
-  let title = formData.get("title");
+  let item_id = formData.get("item_id");
   const item = {
-    title: title,
-    content: "c1",
+    id: item_id,
   }
-  const resulte = await CrudIndex.addItem(item);
-  console.log(resulte);
-console.log("title=", title);
+//console.log(item);
+  const resulte = await CrudShow.delete(Number(item_id));
+  //console.log(resulte);
   return redirect(`/tursotest`);
-//  return json({ result: 'OK' })
 }
 //
 export default function Index() {
@@ -74,6 +72,18 @@ console.log(data);
       <hr className="my-2" />
       <p>id: {data.id}, {data.createdAt}</p>
       <hr />
+      <Form method="post" name="form_delete" id="form_delete" 
+      className="remix__form">
+        <label className="text-2xl font-bold d-none">
+          <div>title:</div>
+          <input  className="input_text" defaultValue={data.id}
+          name="item_id" id="item_id" type="text" />
+        </label>
+        <div>
+          <button type="submit" className="btn-red my-2"
+          >Delete</button>
+        </div>
+      </Form>
     </div>
   );
 }
