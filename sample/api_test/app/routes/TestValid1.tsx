@@ -32,6 +32,16 @@ export const action = async ({
 }: ActionFunctionArgs) => {
   let formData = await request.formData();
   let title = formData.get("title");
+
+  const errors = {};
+  if (title && title.length < 2) {
+    errors.title =
+      "title should be at least 2 characters";
+  }
+  if (Object.keys(errors).length > 0) {
+    return json({ errors });
+  }
+
   const data = {
     title: title
   }
@@ -40,43 +50,24 @@ console.log(data);
   return json({ ret: 'OK', data: data })
 }
 //
-async function validateForm(form: any) {
-  const { username } = form;
-
-  // バリデーションルールを定義
-  const errors = {};
-  if (!username) {
-    //@ts-ignore
-    errors.username = 'Username is required';
-  }
-  // バリデーションエラーがないかを確認
-  if (Object.keys(errors).length > 0) {
-    // エラーがある場合はエラーメッセージを表示し、フォームの送信を中止
-    console.log('Validation errors:', errors);
-    return false;
-  }
-  // バリデーションが成功した場合はtrueを返す
-  return true;
-}
-//
 export default function Index() {
-//  const { form, handleSubmit } = useForm();
   const actionData = useActionData<typeof action>();
   if(actionData){
-console.log("ret=", actionData.ret);
-console.log(actionData.data);
-    //location.href= '/';
+    if(actionData?.errors 
+      && actionData?.errors.length < 1
+    ){
+      console.log("ret=", actionData.ret);
+      console.log(actionData.data);
+    }
   }
   //
   return (
   <div className="container mx-auto my-2 px-8 bg-white" >
     <div>{/* link_div */}
-      Link:
-      <a href="/testvalid1" className="ms-2">[ TestValid1 ]</a>
-      <a href="/testvalid2" className="ms-2">[ TestValid2 ]</a>
+    <a href="/">[ home ]</a>
     </div>
-    <hr className="my-2" />
-    <h1 className="text-4xl font-bold">Test.tsx</h1>
+    <hr />
+    <h1 className="text-4xl font-bold">TestValid1.tsx</h1>
     <hr />
     <Form method="post" name="form3" id="form3" 
     className="remix__form">
@@ -85,6 +76,9 @@ console.log(actionData.data);
         <input  className="input_text"
         name="title" id="title" type="text" required />
       </label>
+      {actionData?.errors?.title ? (
+          <em>{actionData?.errors.title}</em>
+        ) : null}
       <div>
         <button type="submit" className="btn my-2"
         >Save</button>

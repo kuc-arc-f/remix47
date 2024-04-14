@@ -10,6 +10,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useActionData,
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
@@ -18,6 +19,7 @@ import type {
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import CrudIndex from './ApiTest/CrudIndex';
+import LibConfig from '../lib/LibConfig';
 //
 export const meta: MetaFunction = () => {
   return [
@@ -47,13 +49,20 @@ export const action = async ({
   const resulte = await CrudIndex.addItem(item);
   console.log(resulte);
 console.log("title=", title);
-  return redirect(`/apitest`);
-//  return json({ result: 'OK' })
+//  return redirect(`/apitest`);
+  return json({ ret: LibConfig.OK_CODE });
 }
 //
 export default function Index() {
   const { contacts, data } = useLoaderData<typeof loader>();
-console.log(contacts);
+//console.log(contacts);
+  const actionData = useActionData<typeof action>();
+  if(actionData){
+    console.log(actionData.ret);
+    if(actionData.ret === LibConfig.OK_CODE){
+      //location.reload();
+    }
+  }
   //
   return (
     <div className="container mx-auto my-2 px-8 bg-white" >
