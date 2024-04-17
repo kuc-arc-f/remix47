@@ -17,7 +17,13 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from "@remix-run/node";
-
+import { useEffect, useState } from "react";
+//types
+type ErorTypes = {
+  title: string;
+};
+//value
+const errors = {};
 //
 export const meta: MetaFunction = () => {
   return [
@@ -41,6 +47,7 @@ console.log(data);
 }
 //
 export default function Index() {
+  const [updatetime, setUpdatetime] = useState<string>("");
   const actionData = useActionData<typeof action>();
   if(actionData){
 console.log("ret=", actionData.ret);
@@ -52,23 +59,28 @@ console.log(actionData.data);
     if(title){
 console.log("title=", title.value);
 console.log("title.len=", title.value.length);
-//      alert(`文字数: ${title.value.length}`);
       if(title.value.length < 2) {
-        alert(`文字数= ${title.value.length}, title should be at least 2 characters`);
+        const s = `文字数= ${title.value.length}, title should be at least 2 characters`;
+//console.log(s);
+        errors.title = s;
+        setUpdatetime(new Date().toString());
+        alert(s);
         return;
       }
       const form1: any = document.querySelector("#form1") as HTMLInputElement;
       form1.submit();
     }
   }
+  console.log(errors);
   //
   return (
   <div className="container mx-auto my-2 px-8 bg-white" >
     <div>{/* link_div */}
     <a href="/">[ home ]</a>
     </div>
+    updatetime: {updatetime}
     <hr />
-    <h1 className="text-4xl font-bold">TestValid2.tsx</h1>
+    <h1 className="text-4xl font-bold">TestValid2.tsx!</h1>
     <hr />
     <Form method="post" name="form1" id="form1" 
     className="remix__form">
@@ -77,6 +89,9 @@ console.log("title.len=", title.value.length);
         <input  className="input_text"
         name="title" id="title" type="text" required />
       </label>
+      {errors?.title ? (
+        <em className="error_message">{errors.title}</em>
+      ) : null}
     </Form>
     <div>
         <button type="submit" className="btn my-2" onClick={()=>check()}
@@ -85,5 +100,5 @@ console.log("title.len=", title.value.length);
   </div>
   );
 }
-/*onSubmit={()=>check()} 
+/*//  const [errors, setErrors] = useState<ErorTypes>({});
 */

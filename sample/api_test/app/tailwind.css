@@ -16,6 +16,7 @@ a {
   text-decoration: none;
 }
 .d-none { display: none; }
+.error_message { color: red; }
 
 /*footer */
 .main_body_wrap{ min-height: 600px; }

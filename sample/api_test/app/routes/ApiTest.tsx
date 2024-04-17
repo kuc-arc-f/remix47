@@ -86,6 +86,9 @@ export default function Index() {
           <li key={item.id} className="remix__page__resource">
             <h3 className="text-3xl font-bold">{item.title}</h3>
             <p>ID :{item.id}</p>
+            <a href={`/apitestshow?id=${item.id}`}>
+              <button className="btn-outline-purple ms-2">Show</button>
+            </a>
             <hr className="my-2" />
           </li>
         ))}
