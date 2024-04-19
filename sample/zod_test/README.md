@@ -13,4 +13,11 @@
 zod , form test
 
 ***
+### npm
+
+```
+npm install zod
+```
+
+***
 
