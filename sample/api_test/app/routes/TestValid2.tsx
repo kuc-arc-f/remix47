@@ -23,7 +23,9 @@ type ErorTypes = {
   title: string;
 };
 //value
-const errors = {};
+const errors = {
+  title: "",
+};
 //
 export const meta: MetaFunction = () => {
   return [
@@ -38,7 +40,6 @@ export const action = async ({
 }: ActionFunctionArgs) => {
   let formData = await request.formData();
   let title = formData.get("title");
-  const errors = {};
   const data = {
     title: title
   }
@@ -47,14 +48,16 @@ console.log(data);
 }
 //
 export default function Index() {
-  const [updatetime, setUpdatetime] = useState<string>("");
+  const [errorMessages, setErrorMessages] = useState<string>("");
   const actionData = useActionData<typeof action>();
+  //
   if(actionData){
 console.log("ret=", actionData.ret);
 console.log(actionData.data);
   }
   //
   const check = async function(){
+    setErrorMessages("");
     const title = document.querySelector("#title") as HTMLInputElement;
     if(title){
 console.log("title=", title.value);
@@ -63,7 +66,7 @@ console.log("title.len=", title.value.length);
         const s = `文字数= ${title.value.length}, title should be at least 2 characters`;
 //console.log(s);
         errors.title = s;
-        setUpdatetime(new Date().toString());
+        setErrorMessages(JSON.stringify(errors));
         alert(s);
         return;
       }
@@ -71,14 +74,15 @@ console.log("title.len=", title.value.length);
       form1.submit();
     }
   }
-  console.log(errors);
+//console.log(errors);
   //
   return (
   <div className="container mx-auto my-2 px-8 bg-white" >
     <div>{/* link_div */}
     <a href="/">[ home ]</a>
     </div>
-    updatetime: {updatetime}
+    <span className="d-none">error_json: {errorMessages}
+    </span>
     <hr />
     <h1 className="text-4xl font-bold">TestValid2.tsx!</h1>
     <hr />

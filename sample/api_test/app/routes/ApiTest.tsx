@@ -18,8 +18,14 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from "@remix-run/node";
+import { z } from 'zod';
 import CrudIndex from './ApiTest/CrudIndex';
 import LibConfig from '../lib/LibConfig';
+//errors
+//const errors = {
+//title: "",
+//content: "",
+//}
 //
 export const meta: MetaFunction = () => {
   return [
@@ -40,41 +46,58 @@ export const action = async ({
   params,
   request,
 }: ActionFunctionArgs) => {
-  let formData = await request.formData();
-  let title = formData.get("title");
-  const item = {
-    title: title,
-    content: "c1",
-  }
-  const resulte = await CrudIndex.addItem(item);
-  console.log(resulte);
+  const retObj = { ret: LibConfig.NG_CODE, errors: {} };
+  try {
+    let formData = await request.formData();
+    let title = formData.get("title");
+    const item = {
+      title: title,
+      content: "c1",
+    }
 console.log("title=", title);
-//  return redirect(`/apitest`);
-  return json({ ret: LibConfig.OK_CODE });
+    const zodFormData = z.object({
+      title: z
+        .string()
+        .min(2, { message: '2文字以上入力してください。' }),
+    });
+    zodFormData.parse(item);
+    const resulte = await CrudIndex.addItem(item);
+    console.log(resulte);
+    return json({ ret: LibConfig.OK_CODE });
+  } catch (e) {
+    console.error(e.flatten().fieldErrors);
+    retObj.errors = e.flatten().fieldErrors;
+    return json(retObj);
+  }
 }
 //
 export default function Index() {
   const { contacts, data } = useLoaderData<typeof loader>();
 //console.log(contacts);
   const actionData = useActionData<typeof action>();
+  //
   if(actionData){
-    console.log(actionData.ret);
+console.log(actionData);
+//console.log(actionData?.errors?.title);
     if(actionData.ret === LibConfig.OK_CODE){
-      //location.reload();
+      location.reload();
     }
   }
   //
   return (
     <div className="container mx-auto my-2 px-8 bg-white" >
-      <h1 className="text-4xl font-bold">Test.tsx</h1>
+      <h1 className="text-4xl font-bold">Test.tsx!</h1>
       <hr />
       <Form method="post" name="form3" id="form3" 
       className="remix__form">
         <label>
-          <div>title:</div>
+          <div>Title:</div>
           <input  className="input_text"
           name="title" id="title" type="text" />
         </label>
+        {actionData?.errors?.title && (
+          <div className="error_message">{actionData?.errors?.title}</div>
+        )}
         <div>
           <button type="submit" className="btn my-2"
           >Save</button>

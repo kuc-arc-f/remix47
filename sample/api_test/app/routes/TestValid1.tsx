@@ -32,12 +32,12 @@ export const action = async ({
 }: ActionFunctionArgs) => {
   let formData = await request.formData();
   let title = formData.get("title");
-
+//console.log("title=", title);
   const errors = {};
-  if (title && title.length < 2) {
-    errors.title =
-      "title should be at least 2 characters";
+  if (!title || title.length < 2) {
+    errors.title = "title should be at least 2 characters";
   }
+  // Return
   if (Object.keys(errors).length > 0) {
     return json({ errors });
   }
@@ -45,19 +45,24 @@ export const action = async ({
   const data = {
     title: title
   }
-//console.log("title=", title);
 console.log(data);
   return json({ ret: 'OK', data: data })
 }
 //
 export default function Index() {
   const actionData = useActionData<typeof action>();
+  //
   if(actionData){
+    console.log(actionData);
     if(actionData?.errors 
       && actionData?.errors.length < 1
     ){
       console.log("ret=", actionData.ret);
       console.log(actionData.data);
+    }
+    if (actionData?.errors &&
+      Object.keys(actionData?.errors).length > 0) {
+        console.log(actionData?.errors);
     }
   }
   //
@@ -74,10 +79,10 @@ export default function Index() {
       <label className="text-2xl font-bold">
         <div>title:</div>
         <input  className="input_text"
-        name="title" id="title" type="text" required />
+        name="title" id="title" type="text" />
       </label>
       {actionData?.errors?.title ? (
-          <em>{actionData?.errors.title}</em>
+          <em className="error_message">{actionData?.errors.title}</em>
         ) : null}
       <div>
         <button type="submit" className="btn my-2"
@@ -87,5 +92,5 @@ export default function Index() {
   </div>
   );
 }
-/*
+/* required
 */
