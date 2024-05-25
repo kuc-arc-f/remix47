@@ -21,19 +21,27 @@ import type {
 import { z } from 'zod';
 import CrudIndex from './ApiTest/CrudIndex';
 import LibConfig from '../lib/LibConfig';
-//errors
-//const errors = {
-//title: "",
-//content: "",
-//}
+import LoadBox from '../components/LoadBox';
 //
+let initDisplay = true;
+/**
+*
+* @param
+*
+* @return
+*/
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
-//
+/**
+*
+* @param
+*
+* @return
+*/
 export const loader = async () => {
   const resulte = await CrudIndex.getList();
 //console.log(resulte);
@@ -41,7 +49,12 @@ export const loader = async () => {
      contacts: resulte.data, data: resulte
   });
 };
-//
+/**
+*
+* @param
+*
+* @return
+*/
 export const action = async ({
   params,
   request,
@@ -70,11 +83,22 @@ console.log("title=", title);
     return json(retObj);
   }
 }
-//
+/**
+*
+* @param
+*
+* @return
+*/
 export default function Index() {
   const { contacts, data } = useLoaderData<typeof loader>();
-//console.log(contacts);
+console.log(contacts);
   const actionData = useActionData<typeof action>();
+  const [updatetime, setUpdatetime] = useState<string>("");
+  //
+  useEffect(() => {
+    initDisplay = false;
+    setUpdatetime(new Date().toString() + String(Math.random()));
+  }, []);
   //
   if(actionData){
 console.log(actionData);
@@ -85,8 +109,10 @@ console.log(actionData);
   }
   //
   return (
+  <>
+    {initDisplay ? (<LoadBox />) : null}
     <div className="container mx-auto my-2 px-8 bg-white" >
-      <h1 className="text-4xl font-bold">Test.tsx!</h1>
+      <h1 className="text-4xl font-bold">ApiTest.tsx!</h1>
       <hr />
       <Form method="post" name="form3" id="form3" 
       className="remix__form">
@@ -117,9 +143,8 @@ console.log(actionData);
         ))}
         </ul>
     </div>
+  </>
   );
 }
 /*
-<Link to={`./${item.id}`}>[ Show ]</Link>
-<Link to={`edit/${item.id}`}>[ edit ]</Link>
 */
